@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<body class="bg-light">
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Admin Dashboard</h2>
+        <a href="/logout" class="btn btn-danger">Logout</a>
+    </div>
+
+    <!-- DASHBOARD CARDS -->
+    <div class="row text-white mb-4">
+
+        <div class="col-md-3">
+            <div class="card bg-primary">
+                <div class="card-body text-center">
+                    <h5>Total Complaints</h5>
+                    <h2>{{ total }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-warning">
+                <div class="card-body text-center">
+                    <h5>Pending</h5>
+                    <h2>{{ pending }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-info">
+                <div class="card-body text-center">
+                    <h5>In Progress</h5>
+                    <h2>{{ in_progress }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-success">
+                <div class="card-body text-center">
+                    <h5>Resolved</h5>
+                    <h2>{{ resolved }}</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="text-center">Complaint Status (Pie)</h5>
+                <canvas id="statusPie"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="text-center">Complaint Status (Bar)</h5>
+                <canvas id="statusBar"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- COMPLAINTS TABLE -->
+    <div class="card">
+        <div class="card-body">
+            <h4 class="mb-3">All Complaints</h4>
+
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Complaint</th>
+                        <th>Status</th>
+                        <th>Update</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                {% for c in complaints %}
+                <tr>
+                    <td>{{ c[0] }}</td>
+                    <td>{{ c[1] }}</td>
+                    <td>{{ c[2] }}</td>
+                    <td>{{ c[3] }}</td>
+                    <td>
+                        <form method="post" action="/update_status/{{ c[0] }}">
+                            <select name="status" class="form-select form-select-sm mb-2">
+                                <option {% if c[3]=='Pending' %}selected{% endif %}>Pending</option>
+                                <option {% if c[3]=='In Progress' %}selected{% endif %}>In Progress</option>
+                                <option {% if c[3]=='Resolved' %}selected{% endif %}>Resolved</option>
+                            </select>
+                            <button class="btn btn-sm btn-primary">Update</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+<script>
+    const pending = {{ pending }};
+    const inProgress = {{ in_progress }};
+    const resolved = {{ resolved }};
+
+    // PIE CHART
+    new Chart(document.getElementById("statusPie"), {
+        type: "pie",
+        data: {
+            labels: ["Pending", "In Progress", "Resolved"],
+            datasets: [{
+                data: [pending, inProgress, resolved],
+                backgroundColor: ["#ffc107", "#0dcaf0", "#198754"]
+            }]
+        }
+    });
+
+    // BAR CHART
+    new Chart(document.getElementById("statusBar"), {
+        type: "bar",
+        data: {
+            labels: ["Pending", "In Progress", "Resolved"],
+            datasets: [{
+                label: "Number of Complaints",
+                data: [pending, inProgress, resolved],
+                backgroundColor: ["#ffc107", "#0dcaf0", "#198754"]
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+
+</body>
+</html>

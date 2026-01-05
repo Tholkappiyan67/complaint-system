@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Status</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h2>Complaint Status</h2>
+    {% for c in data %}
+        <p><b>{{ c[2] }}</b> → {{ c[3] }}</p>
+    {% endfor %}
+    <a href="/complaint">Add Another Complaint</a>
+</div>
+</body>
+</html>
