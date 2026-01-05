@@ -8,13 +8,18 @@ app = Flask(__name__)
 app.secret_key = "secret123"
 
 # ---------------- DATABASE CONNECTION ----------------
+import os
+
 def get_db():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="thols",   # <-- change this
-        database="complaint_system"
+        host=os.environ.get("DB_HOST"),
+        user=os.environ.get("DB_USER"),
+        password=os.environ.get("DB_PASSWORD"),
+        database=os.environ.get("DB_NAME"),
+        port=int(os.environ.get("DB_PORT", 3306))
     )
+
+    
 
 # ---------------- LOGIN ----------------
 @app.route("/", methods=["GET", "POST"])
